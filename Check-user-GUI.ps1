@@ -82,10 +82,10 @@ $UserNameBox.Focus() }
 function GetinfoFunction ($UserName) {
 $Result = get-aduser $UserName `
     -properties DistinguishedName,name, enabled, mail, extensionAttribute1,extensionAttribute3,extensionAttribute14, PasswordLastSet, PasswordExpired,lastlogon,employeeType,ScriptPath |
-    select name,mail, DistinguishedName, enabled,ScriptPath, extensionAttribute1,extensionAttribute3,extensionAttribute14, PasswordLastSet, PasswordExpired,@{N='LastLogon'; E={[DateTime]::FromFileTime($_.LastLogon)}},employeeType |fl |out-string -Width 170
+    Select-Object name,mail, DistinguishedName, enabled,ScriptPath, extensionAttribute1,extensionAttribute3,extensionAttribute14, PasswordLastSet, PasswordExpired,@{N='LastLogon'; E={[DateTime]::FromFileTime($_.LastLogon)}},employeeType |Format-List |out-string -Width 170
 $Groups = Get-ADPrincipalGroupMembership $UserName
 $ResultGroups = $Groups | 
-    select name |
+    Select-Object name |
     Sort-Object -Property name |
     Format-Wide -AutoSize| Out-String -Width 170
     #Format-Wide -Column 3 -AutoSize| Out-String
@@ -95,7 +95,7 @@ $Groups |
     Where-Object {$_ -Like "*-FIL*"} | 
     Sort-Object -Property name | 
     Get-ADGroup -Properties Description | 
-    Select Name,Description | 
+    Select-Object Name,Description | 
     Format-Table -AutoSize | Out-String -Width 170
 
 $SCRGroups = 
@@ -103,7 +103,7 @@ $Groups |
     Where-Object {$_ -Like "*-SCR-*"} | 
     Sort-Object -Property name | 
     Get-ADGroup -Properties Description | 
-    Select Name,Description | 
+    Select-Object Name,Description | 
     Format-Table -AutoSize | Out-String -Width 170
 
 $ResultBox.text = $Result
